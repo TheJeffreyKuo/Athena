@@ -124,6 +124,41 @@ class _SurveyScreenState extends State<SurveyScreen> {
           onSaved: (v) => _answers[q.id] = v?.trim() ?? '',
         );
 
+      case QuestionType.multipleChoice:
+        return FormField<String>(
+          validator: q.isRequired
+              ? (v) => v == null ? 'Please select an option' : null
+              : null,
+          builder: (state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...q.options!.map((option) => RadioListTile<String>(
+                      title: Text(option),
+                      value: option,
+                      groupValue: _answers[q.id] as String?,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (v) {
+                        setState(() => _answers[q.id] = v);
+                        state.didChange(v);
+                      },
+                    )),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+
       default:
         return const Text('Unsupported type');
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,8 +9,17 @@ import 'screens/responses_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // Enables offline persistence for mobile platforms
-  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+
+  // Enable offline persistence per platform
+  if (kIsWeb) {
+    try {
+      await FirebaseFirestore.instance
+          .enablePersistence(const PersistenceSettings(synchronizeTabs: true));
+    } catch (_) {}
+  } else {
+    FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+  }
+
   runApp(const AthenaApp());
 }
 

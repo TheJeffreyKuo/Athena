@@ -56,7 +56,7 @@ class ResponsesScreen extends StatelessWidget {
                   subtitle: (name != null && name.isNotEmpty) ? Text(date) : null,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: surveyQuestions.map((q) {
@@ -95,12 +95,49 @@ class ResponsesScreen extends StatelessWidget {
                         }).toList(),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: () => _confirmDelete(context, r.id!),
+                          icon: const Icon(Icons.delete_outline, size: 18),
+                          label: const Text('Delete'),
+                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
             },
           );
         },
+      ),
+    );
+  }
+
+  // Shows a delete confirmation dialog
+  void _confirmDelete(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Response?'),
+        content: const Text('This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              FirebaseService.deleteResponse(id);
+              Navigator.pop(ctx);
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }

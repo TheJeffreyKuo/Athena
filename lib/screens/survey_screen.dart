@@ -159,8 +159,47 @@ class _SurveyScreenState extends State<SurveyScreen> {
           },
         );
 
-      default:
-        return const Text('Unsupported type');
+      case QuestionType.checkbox:
+        return FormField<List<String>>(
+          initialValue: _answers[q.id] as List<String>? ?? [],
+          validator: q.isRequired
+              ? (v) => (v == null || v.isEmpty) ? 'Select at least one option' : null
+              : null,
+          builder: (state) {
+            final selected = _answers[q.id] as List<String>;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...q.options!.map((option) => CheckboxListTile(
+                      title: Text(option),
+                      value: selected.contains(option),
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (checked) {
+                        setState(() {
+                          if (checked == true) {
+                            selected.add(option);
+                          } else {
+                            selected.remove(option);
+                          }
+                        });
+                        state.didChange(selected);
+                      },
+                    )),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text(
+                      state.errorText!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
     }
   }
 }

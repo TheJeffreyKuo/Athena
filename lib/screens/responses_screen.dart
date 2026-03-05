@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../models/question.dart';
 import '../models/survey_response.dart';
 import '../services/firebase_service.dart';
 
@@ -47,9 +48,54 @@ class ResponsesScreen extends StatelessWidget {
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                child: ExpansionTile(
+                  title: Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   subtitle: (name != null && name.isNotEmpty) ? Text(date) : null,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: surveyQuestions.map((q) {
+                          final answer = r.answers[q.id];
+                          if (answer == null) return const SizedBox.shrink();
+                          String display;
+                          if (answer is List) {
+                            display = answer.isNotEmpty ? answer.join(', ') : '—';
+                          } else {
+                            final text = answer.toString();
+                            display = text.isNotEmpty ? text : '—';
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 140,
+                                  child: Text(
+                                    q.title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(display,
+                                      style: const TextStyle(fontSize: 13)),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },

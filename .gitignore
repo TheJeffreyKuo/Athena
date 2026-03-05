@@ -43,3 +43,20 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase
+lib/firebase_options.dart
+firebase.json
+.firebaserc
+firebase_debug.log
+firebase-debug.log
+
+# Environment
+.env
+
+# Web build
+/build/web/
+
+# OS files
+Thumbs.db
+desktop.ini

@@ -110,6 +110,22 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   // Builds the input widget for a question
   Widget _buildInput(Question q) {
-    return const Text('Input placeholder');
+    switch (q.type) {
+      case QuestionType.text:
+        return TextFormField(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Type your answer...',
+          ),
+          maxLines: q.maxLines,
+          validator: q.isRequired
+              ? (v) => (v == null || v.trim().isEmpty) ? 'This field is required' : null
+              : null,
+          onSaved: (v) => _answers[q.id] = v?.trim() ?? '',
+        );
+
+      default:
+        return const Text('Unsupported type');
+    }
   }
 }
